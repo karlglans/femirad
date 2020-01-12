@@ -1,7 +1,7 @@
 import GamestateNode from './GamestateNode';
 import { fiveInRow } from './ranking';
 
-const max_children = 30; // s0: 4 10: 18
+const max_children = 35; // s0: 4 10: 18
 const highValue = fiveInRow * 100;
 
 /**
@@ -32,7 +32,8 @@ export function minMax(gamestateNode, ply, maxPly, team, ply0, shouldMax, alpha,
   // optimization: decrease number of child nodes depening on depth
   let nChildren = Math.max(max_children + (ply0 - ply) * 2, 2);
 
-  const children = gamestateNode.generateChildren(nChildren);
+  const doEverySurroundingCell = ply0 > 0 && ply === ply0;
+  const children = gamestateNode.generateChildren(nChildren, doEverySurroundingCell);
   const len = children.length;
   let value;
   if (shouldMax) {
@@ -52,7 +53,7 @@ export function minMax(gamestateNode, ply, maxPly, team, ply0, shouldMax, alpha,
       }
     }
   }
- 
+  gamestateNode.releaseBoard(); // to save some memory
   gamestateNode.sortChildren(!shouldMax); // warning (why not plyTeam?)
   gamestateNode.value = gamestateNode.getValueFromFirstChild();
 

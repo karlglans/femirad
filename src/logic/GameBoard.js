@@ -62,14 +62,14 @@ export default class GameBoard {
     return newBoard;
   }
 
-  generateMoves(maxMoves) {
+  generateMoves(maxMoves, doEverySurroundingCell) {
     const { board, row } = this;
     // const indices = getIndicesFromCenter(row); // from center and out instead of from 0
-    const indices = makePriortyOrderedListOfOpenIndecis(board, row, maxMoves);
+    const indices = makePriortyOrderedListOfOpenIndecis(board, row, doEverySurroundingCell? -1: maxMoves);
     const result = [];
     let nFoundMoves = 0;
     indices.forEach(boardPosIdx => {
-      if (nFoundMoves < maxMoves && board[boardPosIdx] === 0) {
+      if ( (nFoundMoves < maxMoves || doEverySurroundingCell)  && board[boardPosIdx] === 0) {
         result.push(new Move(boardPosIdx));
         nFoundMoves++;
       }
