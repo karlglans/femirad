@@ -1,95 +1,31 @@
 import GameBoard, {debugCount} from './GameBoard';
 import MinmaxSearch from './MinMaxSearch';
 
-
-// function debugRising() {
-//   const gameBoard12x12 = new GameBoard(12);
-//   gameBoard12x12.setBoard([
-//     0, 0, 0, 0, 5, 0,  0, 0, 0, 0, 0, 0, // 0,  ... ,  7,  8,  9, 10, 11
-//     0, 0, 0, 6, 0, 1,  0, 0, 0, 0, 0, 0, // 12, ... , 20, 21, 22, 23
-//     0, 0, 7, 0, 1, 0,  0, 0, 0, 0, 0, 0, // 24, ... , 33, 34, 35
-//     0, 8, 0, 1, 0, 0,  0, 0, 0, 0, 0, 0, // 36, ... , 46, 47
-//     9, 0, 1, 0, 0, 0,  0, 0, 0, 0, 0, 0, // 48, 59
-//     0, 1, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, // 60, 71
-
-//     0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, // 72
-//     0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 2, // 84
-//     0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 2, 0, // 96
-//     0, 0, 0, 0, 0, 0,  0, 0, 0, 2, 0, 0, // 108, 119
-//     0, 0, 0, 0, 0, 0,  0, 0, 2, 0, 0, 0, // 120, ... 129, 130, 131
-//     0, 0, 0, 0, 0, 0,  0, 2, 0, 0, 0, 0, // 132, ... , 139, 140, 141, 142, 143
-//   ]);
-//   gameBoard12x12.evaluateWin(1);
-// }
-
-function debugEval() {
-  const gameBoard8x8 = new GameBoard(8);
-
-  gameBoard8x8.setBoard([
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 1, 0,
-    0, 0, 0, 0, 0, 0, 0, 1,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, // 56
-  ]); // 59
-
-  // 2: i 6  j 6 idx 6 // innan
-  // 1: i 7  j 7 verOpenBegining: t 7
-  // 0: i 0  j 7 verOpenBegining: t 56
-
-  gameBoard8x8.print();
-  gameBoard8x8.evaluate(1);
-}
-
-// start 2 by 2
-// this.gameBoard.setCell(20, 1);
-// this.gameBoard.setCell(21, 2);
-// this.gameBoard.setCell(36, 1);
-// this.gameBoard.setCell(37, 2);
-
-// ply 5
-// this.gameBoard.setCell(20, 1);
-// this.gameBoard.setCell(21, 2);
-// this.gameBoard.setCell(35, 1);
-// this.gameBoard.setCell(37, 2);
-// this.gameBoard.setCell(50, 1);
-
-// close to win
-// this.gameBoard.setCell(20, 1);
-// this.gameBoard.setCell(21, 2);
-// this.gameBoard.setCell(36, 1);
-// this.gameBoard.setCell(37, 2);
-// this.gameBoard.setCell(68, 1);
-// this.gameBoard.setCell(69, 2);
-
-// one step from win
-// this.gameBoard.setCell(20, 1);
-// this.gameBoard.setCell(21, 2);
-// this.gameBoard.setCell(36, 1);
-// this.gameBoard.setCell(37, 2);
-// this.gameBoard.setCell(52, 1);
-// this.gameBoard.setCell(53, 2);
-// this.gameBoard.setCell(68, 1);
-// this.gameBoard.setCell(69, 2);
-
 export default class FiveInRowGame {
   constructor(row, maxSearchDepth) {
     this.gameBoard = new GameBoard(row);
-
-    // this.gameBoard.setCell(20, 1);
-    // this.gameBoard.setCell(21, 2);
-    // this.gameBoard.setCell(36, 1);
-    // this.gameBoard.setCell(37, 2);
-    // this.gameBoard.setCell(52, 1);
-
     this.row = row;
-    this.ply = 5; // s0: 4
+    this.ply = 0; // s0: 4
     this.maxSearchDepth = 5; // // s0: 5
     this.move = [];
     this.tempClick = 0;
+
+    this.initDebugGameSituation(0);
+  }
+
+  initDebugGameSituation(situation) {
+    if (situation === 1) {
+      this.gameBoard.setCell(7 * 16 + 6, 2);
+      this.gameBoard.setCell(7 * 16 + 7, 1);
+      this.gameBoard.setCell(8 * 16 + 6, 1);
+      this.gameBoard.setCell(8 * 16 + 7, 2);
+      this.gameBoard.setCell(8 * 16 + 8, 2);
+      this.gameBoard.setCell(9 * 16 + 8, 2);
+      this.gameBoard.setCell(6 * 16 + 8, 1);
+      this.gameBoard.setCell(6 * 16 + 5, 1);
+      this.gameBoard.setCell(7 * 16 + 9, 1);
+      this.ply = 7; 
+    }
   }
 
   /**

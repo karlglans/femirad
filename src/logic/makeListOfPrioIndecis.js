@@ -65,26 +65,31 @@ export function makeListOfSurroundingCells(boardArr, row) {
  * When searching new positions, then positions will be taken from this array.
  * Positions around exisiting structures on the game board and positions in the center will be
  * considered more valuable. More valuable positions will end up first.
+ * @param {number} maxSize maximum size of result array or -1 for every surrounding cell
  */
-export default function makePriortyOrderedListOfOpenIndecis(boardArr, row, size) {
+export default function makePriortyOrderedListOfOpenIndecis(boardArr, row, maxSize) {
   const fromMiddleAndOut = getIndicesFromCenter(row); // every possible position, just in diff order
   const openPositionsAroundStructures = makeListOfSurroundingCells(boardArr, row);
   const orderedFreePositions = [];
   const otherOpenPositions = [];
   let count = 0;
   fromMiddleAndOut.forEach(cellIdx => {
-    if (count < size) {
+    if (count < maxSize || maxSize === -1) {
       if (openPositionsAroundStructures[cellIdx] === cellIdx) {
         orderedFreePositions.push(cellIdx);
-        count++;
+        if (maxSize !== -1) count++;
       } else if (boardArr[cellIdx] === 0) {
         otherOpenPositions.push(cellIdx);
       }
     }
   });
+  if (maxSize === -1) {
+    // should return every openPositionsAroundStructures
+    return orderedFreePositions;
+  }
   // we are still looking for more open positions
   otherOpenPositions.forEach(cellIdx => {
-    if (count < size) {
+    if (count < maxSize) {
       orderedFreePositions.push(cellIdx);
       count++;
     }

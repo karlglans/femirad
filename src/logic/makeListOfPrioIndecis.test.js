@@ -106,4 +106,16 @@ describe('makePriortyOrderedListOfOpenIndecis()', function () {
     const ordredPositions = makePriortyOrderedListOfOpenIndecis(board, rowOf5, numberOfPositions);
     expect(ordredPositions.length).toEqual(numberOfPositions);
   });
+  test('when parameter3, size: -1 will give every surrouning poss', () => {
+    const board = [
+        0,  0,  0,  0,  0,  0,  // *  *  *  0
+        0,  2,  0,  0,  0,  0,  // *  2  *  0
+        0,  0,  0,  0,  0,  0,  // *  *  *  0
+        0,  0,  0,  0,  0,  0,  // 0  0  0  0
+        0,  0,  0,  0,  0,  0,
+        0,  0,  0,  0,  0,  0 ];
+    const rowOf5 = 6
+    const ordredPositions = makePriortyOrderedListOfOpenIndecis(board, rowOf5, -1);
+    expect(ordredPositions.length).toEqual(8); // 8 positions around that 2 on map
+  });
 });

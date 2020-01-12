@@ -1,7 +1,7 @@
 import { fiveInRow } from './ranking';
 
-const sortNodesByMaxValue = (a, b) => a.value < b.value ? -1 : a.value > b.value ? 1 : 0;
-const sortNodesByMinValue = (a, b) => a.value > b.value ? -1 : a.value < b.value ? 1 : 0;
+// const sortNodesByMaxValue = (a, b) => a.value < b.value ? -1 : a.value > b.value ? 1 : 0;
+// const sortNodesByMinValue = (a, b) => a.value > b.value ? -1 : a.value < b.value ? 1 : 0;
 
 // kankse döpa om till BoardSearchNode
 export default class GamestateNode {
@@ -24,6 +24,10 @@ export default class GamestateNode {
     //   debugger;
     // }
     this.gameBoard = gameBoard.applyMove(move, plyTeam);
+  }
+
+  releaseBoard(){
+    this.gameBoard = null; // hopefully helping garbage collection to start a bit earlier 
   }
 
   checkWin(team) {
@@ -95,10 +99,11 @@ export default class GamestateNode {
 
   /**
    * @param {number} nChildren maximum number of children
+   * @param {bool} doEverySurroundingCell if true, maximum number of children will adapt 
    */
-  generateChildren(nChildren) {
+  generateChildren(nChildren, doEverySurroundingCell) {
     const { gameBoard, ply } = this;
-    const moves = gameBoard.generateMoves(nChildren);
+    const moves = gameBoard.generateMoves(nChildren, doEverySurroundingCell);
     const children = [];
     moves.forEach(move => {
       children.push(new GamestateNode(gameBoard, move, ply + 1));
@@ -110,10 +115,10 @@ export default class GamestateNode {
   staticEvaluation(team) {
     const { gameBoard } = this;
     const opponentTeam = team === 1 ? 2 : 1;
-    const value = gameBoard.evaluate(team) - gameBoard.evaluate(opponentTeam);
+    const value = gameBoard.evaluate(team) - 2 * gameBoard.evaluate(opponentTeam);
     gameBoard.relese(); // to save memory
+    this.gameBoard = null;
     this.value = value;
-    // console.log('static eval', team, value);
     return value;
   }
 };
