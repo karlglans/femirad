@@ -4,25 +4,12 @@ import { open2cells, semiOpen2cells, open3cells, semiOpen3cells, open4row,
   semiOpen4row, fiveInRow } from './ranking';
 import makePriortyOrderedListOfOpenIndecis from './makeListOfPrioIndecis';
 
-
-/*
-  3 * * * * 
-  2 * * * *
-  j * * * *
-  1 * * * *
-  0 1 i 2 3
-*/
-
-const cellTypeUndefined = -1;
 const cellTypeOpen = 0; // could still be taken
-const cellTypeTaken = 1; // taken by player
-const cellTypeObstacle = 2; // taken by opponent or inaccesible due to out of map edge
 let debug_countItt = 0;
 
 export function debugCount() {
   return debug_countItt;
 }
-
 
 /**
  * Built around an an array of numbers 0, 1, 2 of size row ^ 2.
@@ -64,7 +51,6 @@ export default class GameBoard {
 
   generateMoves(maxMoves, doEverySurroundingCell) {
     const { board, row } = this;
-    // const indices = getIndicesFromCenter(row); // from center and out instead of from 0
     const indices = makePriortyOrderedListOfOpenIndecis(board, row, doEverySurroundingCell? -1: maxMoves);
     const result = [];
     let nFoundMoves = 0;
@@ -92,58 +78,6 @@ export default class GameBoard {
       }
     }
     this.board = dest;
-  }
-
-  /**
-   * Will produce a sequense that will represent the result of a subsetSelection of the gamemap.
-   * This sequense is designed to be compaired with feateures like: two horizontal cells.
-   * The informoaton will be simplified and will reduce cells belonging to the opponent to an obsicle,
-   * just like cells outside maps.
-   * (idea: Will return [] if offset position is found to be outside gameMap.)
-   * 
-   * gameMap         +    subsetSelection              =  subset
-   *  0  0  0  0  0        0  0  0  0  0 
-   *  0  0  0  0  0        0  0  0  0  0 
-   *  0  0  0  1  0        0  0  0 [1  0  0  0]         [1  0  2  2]
-   *  0  0  0  0  1        0  0  0 [0  1  0  0]         [0  1  2  2]
-   *  0  0  0  0  0        0  0  0 [0  0  0  0]         [0  0  2  2]
-   *                               [0  0  0  0]         [2  2  2  2]
-   * 
-   * @param {*} i0 gameMap position
-   * @param {*} j0 gameMap position
-   * @param {*} offsetU center position in mask. 
-   * @param {*} offsetV center position in mask
-   * @param {*} width dim mask
-   * @param {*} height dim mask
-   * @param {*} team 1 or 2.
-   */
-  makeSubset(i0, j0, board, row, subWidth, subHeight, team) {
-    let u, v; // postions in subsetSelection
-    let subset = [];
-    let i1, j1; // positions in gameMap. could also end up outside map
-    let idx; // index to gameMap
-    let cellType = cellTypeUndefined;
-    for (v = 0; v < subHeight; v++) {
-      for (u = 0; u < subWidth; u++) {
-        cellType = cellTypeUndefined; 
-        i1 = i0 + u;
-        j1 = j0 + v;
-        if (i1 < 0 || j1 < 0 || i1 >= row || j1 >= row) {
-          cellType = cellTypeObstacle; // outside gameMap, maybe remove
-        } else {
-          idx = i1 + j1 * row;
-          if (board[idx] === 0) {
-            cellType = cellTypeOpen;
-          } else if (board[idx] === team) {
-            cellType = cellTypeTaken;
-          } else {
-            cellType = cellTypeObstacle;
-          }
-        }
-        subset.push(cellType);
-      }
-    }
-    return subset;
   }
 
   print() {
@@ -391,7 +325,6 @@ export default class GameBoard {
       }
       for (; i < row; i++) {
         if (idxFall < 0) {
-          if (idxRise > 0) debugger; // should not happen
           i = row;
           continue;
         } 
@@ -418,7 +351,6 @@ export default class GameBoard {
         idxRise += risingStep;
       }
     }
-
     debug_countItt += 1;
     return accValue; // accValue
   }

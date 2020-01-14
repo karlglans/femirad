@@ -2,7 +2,7 @@ import MinMaxSearch from "./MinMaxSearch";
 import GameBoard from "./GameBoard";
 
 // put xdescribe to remove these tests
-describe('expensve search tests', function () {
+describe('some expensve search tests', function () {
   const row = 8, teamOne = 1, teamTwo = 2, searchDepth = 3;
   const gameBoard = new GameBoard(row);
   const gameBoardExpected = new GameBoard(row);

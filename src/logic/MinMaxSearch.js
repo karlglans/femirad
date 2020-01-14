@@ -75,8 +75,10 @@ export default class MinMaxSearch {
     // move: null, since the move is already integreated into the current gameboard
     const node0 = new GamestateNode(gameBoard, null, ply0);
     // debugger;
-    minMax(node0, ply, maxPly, team, ply0, true, -highValue, highValue);
+    const value = minMax(node0, ply, maxPly, team, ply0, true, -highValue, highValue);
     // console.log(node0);
-    return node0.getBestMove(); // not sure
+    const move = node0.getBestMove();
+    move.value = value;
+    return move; 
   }
 }
