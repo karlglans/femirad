@@ -12,6 +12,7 @@ class App extends React.Component {
     super();
     this.handleStep = this.handleStep.bind(this);
     this.handleClickCell = this.handleClickCell.bind(this);
+    this.handleRestart = this.handleRestart.bind(this);
     this.state = {
       gameBoard : game.getGameBoard(),
       isAllowingNextStep: true,
@@ -53,6 +54,18 @@ class App extends React.Component {
       });
     }
   }
+
+  handleRestart() {
+    if (this.state.isAllowingNextStep) {
+      game.reset();
+      this.setState({
+        currentPlayer: game.currentPlayer(),
+        gameBoard : game.getGameBoard(),
+        gameOver: game.isGameOver(),
+        lastChangedCellIdx: -1
+      });
+    }
+  }
   
   render() {
     return (
@@ -67,6 +80,7 @@ class App extends React.Component {
           <ControlPanel
             gameOver={this.state.gameOver}
             handleStep={this.handleStep}
+            handleRestart={this.handleRestart}
             isAllowingNextStep={this.state.isAllowingNextStep}
             currentPlayer={this.state.currentPlayer}
           />

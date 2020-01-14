@@ -57,6 +57,13 @@ export default class FiveInRowGame {
     });
   }
 
+  reset() {
+    this.gameBoard = new GameBoard(this.row);
+    this.ply = 0;
+    this.move = [];
+    this.gameIsOver = false;
+  }
+
   evaluateWinningMove(move) {
     const {ply} = this;
     // note: a win is given value: fiveInRow - ply by search algo 

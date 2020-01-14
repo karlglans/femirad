@@ -14,6 +14,8 @@ const ControlPanel = props => {
       {!props.gameOver && ( <button style={{marginTop: 20}} disabled={!props.isAllowingNextStep} onClick={props.handleStep}> 
         {setButtonText} </button>)}
       {props.gameOver && (<p style={{color:'white'}}>Game Over</p>)}
+      {props.gameOver && ( <button style={{marginTop: 5}} onClick={props.handleRestart}> 
+        restart </button>)}
     </div>
   );
 };
