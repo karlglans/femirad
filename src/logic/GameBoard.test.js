@@ -507,58 +507,6 @@ describe('gameBoard:setBoard()', function () {
   });
 });
 
-describe('gameBoard:makeSubset()', function () {
-  test('can get 1x4 (horizontal) subset', () => {
-    const team = 1, i0 = 0, j0 = 2;
-    gameBoard.setBoard([
-        0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
-        1, 2, 2, 1, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
-    ]);
-    let boardArr = gameBoard.getBoard();
-    expect(gameBoard.makeSubset(i0, j0, boardArr, row, 4, 1, team))
-      .toEqual([1, 2, 2, 1]);
-  });
-  test('can get 2x4 subset', () => {
-    const team = 1, i0 = 4, j0 = 6;
-    gameBoard.setBoard([
-        0, 0, 0, 0, 1, 1, 1, 1,
-        0, 0, 0, 0, 2, 2, 2, 2,
-        0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
-    ]);
-    let boardArr = gameBoard.getBoard();
-    expect(gameBoard.makeSubset(i0, j0, boardArr, row, 4, 2, team))
-      .toEqual([2, 2, 2, 2,
-                1, 1, 1, 1]); // rows in opposit order
-  });
-  test('can get 4x1 (vertical) subset', () => {
-    const team = 1, i0 = 3, j0 = 1;
-    gameBoard.setBoard([
-        0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 2, 0, 0, 0, 0,
-        0, 0, 0, 2, 0, 0, 0, 0,
-        0, 0, 0, 1, 0, 0, 0, 0,
-        0, 0, 0, 1, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0,
-    ]);
-    let boardArr = gameBoard.getBoard();
-    expect(gameBoard.makeSubset(i0, j0, boardArr, row, 1, 4, team))
-      .toEqual([1, 1, 2, 2]); // rows in opposit order
-  });
-});
-
 describe('gameBoard:generateMoves()', function () {
   test('can return empty array if no possible moves', () => {
     gameBoard.setBoard([
@@ -573,7 +521,7 @@ describe('gameBoard:generateMoves()', function () {
     ]);
     expect(gameBoard.generateMoves().length).toBe(0);
   });
-  test('can return an array of possible moves near center', () => {
+  test('can return an array of possible moves closest to center', () => {
     gameBoard.setBoard([
         1, 1, 1, 1, 1, 1, 1, 1,
         0, 1, 1, 1, 1, 1, 1, 1, // rejected pos, since we only asking for 2

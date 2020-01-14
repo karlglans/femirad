@@ -16,10 +16,15 @@ class App extends React.Component {
       gameBoard : game.getGameBoard(),
       isAllowingNextStep: true,
       currentPlayer: game.currentPlayer(),
-      lastChangedCellIdx: -1
+      lastChangedCellIdx: -1,
+      gameOver: false
     }
   }
+
   handleStep() {
+    if (game.isGameOver()) {
+      return;
+    }
     // TODO: seems be blocking or something
     console.log('- handleStep handleStep - ');
     this.setState({ isAllowingNextStep: false, lastChangedCellIdx: -1 });
@@ -29,18 +34,23 @@ class App extends React.Component {
           gameBoard : game.getGameBoard(),
           isAllowingNextStep: true,
           lastChangedCellIdx: cellIdx,
+          gameOver: game.isGameOver(),
           currentPlayer: game.currentPlayer() });
       });
   }
 
   handleClickCell(cellIdx) {
+    if (game.isGameOver()) {
+      return;
+    }
     if (this.state.isAllowingNextStep) {
       game.setCell(cellIdx, 1);
       this.setState({
         currentPlayer: game.currentPlayer(),
         gameBoard : game.getGameBoard(),
-        lastChangedCellIdx: cellIdx});
-      // TODO evaluate win
+        gameOver: game.isGameOver(),
+        lastChangedCellIdx: cellIdx
+      });
     }
   }
   
@@ -55,6 +65,7 @@ class App extends React.Component {
             lastChangedCellIdx = {this.state.lastChangedCellIdx}
           />
           <ControlPanel
+            gameOver={this.state.gameOver}
             handleStep={this.handleStep}
             isAllowingNextStep={this.state.isAllowingNextStep}
             currentPlayer={this.state.currentPlayer}

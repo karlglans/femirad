@@ -1,14 +1,16 @@
 import GameBoard, {debugCount} from './GameBoard';
 import MinmaxSearch from './MinMaxSearch';
+import { fiveInRow } from './ranking';
 
 export default class FiveInRowGame {
   constructor(row, maxSearchDepth) {
     this.gameBoard = new GameBoard(row);
     this.row = row;
-    this.ply = 0; // s0: 4
-    this.maxSearchDepth = 5; // // s0: 5
+    this.ply = 0;
+    this.maxSearchDepth = 5;
     this.move = [];
     this.tempClick = 0;
+    this.gameIsOver = false;
 
     this.initDebugGameSituation(0);
   }
@@ -32,74 +34,55 @@ export default class FiveInRowGame {
    * Will make the a move for the active team.
    */
   doNextMove() {
+    const {gameBoard, ply, maxSearchDepth, gameIsOver} = this;
     return new Promise( (resolve, reject) => {
       setTimeout(() => {
-        const {gameBoard, ply, maxSearchDepth} = this;
         const teamToAct = (ply % 2) + 1;
 
+        if (gameIsOver) reject();
         const t1 = performance.now();
-
-
-        // aaaa();
-        // debugRising();
-        // debugEval();
-        
         
         const search = new MinmaxSearch(gameBoard, ply, maxSearchDepth);
         const move = search.search();
-        if (move != null) {
-          console.log('found move');
+        if (move != null && !gameIsOver) {
           this.gameBoard = gameBoard.applyMove(move, teamToAct);
+          this.evaluateWinningMove(move);
           this.ply = ply + 1;
         }
         resolve(move && move.cellIdx);
 
-
-        // const arr = getIndicesFromCenter(this.row);
-        // const idx = arr[this.tempClick];
-        // this.tempClick++;
-        // this.gameBoard.setCell(idx, 1);
-
         const t2 = performance.now();
         console.log('move done', (t2 - t1) * 0.001, debugCount() );
-
-        // some messurements
-        // depth: 5, 
-        // normal evaluate:  382'205'952
-        // 24.5  29.0  24.5  24.4  24.1  efcomp  15.0 15.5
-        
-        // evaluate row-1:  340'918'272
-        // 22.3  23.4  23.0  24.0  21.8  efcomp 14.7 14.7 14.0
-        // efwin 12.0 11.8 12
-        
-        // evaluate feature: 264'634'368
-        // 35.3 35.7  efcomp 29.7
-
-        // case1: depth: 5, maxChid: 18d
-        // 533063
-        // 5.07  5.11
-        // 23.8 23.8
-
-        // case1: depth: 7, maxChid: 25d
-        // 2345070
-        // sort:     22.45 23.4
-        // pick1st:  21.4  21.8
       }, 0);
     });
+  }
+
+  evaluateWinningMove(move) {
+    const {ply} = this;
+    // note: a win is given value: fiveInRow - ply by search algo 
+    if (move.value >= (fiveInRow - ply - 1)) {
+      this.gameIsOver = true;
+    }
   }
 
   currentPlayer() {
     return (this.ply % 2) + 1;
   }
-
+  isGameOver() {
+    return this.gameIsOver;
+  }
   getGameState() {
     return this.gameBoard;
   }
   getGameBoard() {
     return this.gameBoard.getBoard();
   }
-  setCell(cellIdx, player) {
-    this.gameBoard.setCell(cellIdx, this.currentPlayer());
+  setCell(cellIdx) {
+    const {gameBoard} = this;
+    gameBoard.setCell(cellIdx, this.currentPlayer());
+    if (gameBoard.evaluateWin(this.currentPlayer()) >= fiveInRow) {
+      this.gameIsOver = true;
+    }
     this.ply += 1;
   }
 };
