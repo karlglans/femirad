@@ -1,7 +1,7 @@
 import { fiveInRow } from './ranking';
 
-// const sortNodesByMaxValue = (a, b) => a.value < b.value ? -1 : a.value > b.value ? 1 : 0;
-// const sortNodesByMinValue = (a, b) => a.value > b.value ? -1 : a.value < b.value ? 1 : 0;
+const sortNodesByMaxValue = (a, b) => a.value < b.value ? -1 : a.value > b.value ? 1 : 0;
+const sortNodesByMinValue = (a, b) => a.value > b.value ? -1 : a.value < b.value ? 1 : 0;
 
 // kankse döpa om till BoardSearchNode
 export default class GamestateNode {
@@ -9,9 +9,10 @@ export default class GamestateNode {
     // console.assert(gameBoard instanceof GameBoard);
     this.gameBoard = gameBoard;
     this.move = move;
-    this.value = -1; // for compair min max 
+    this.value = undefined; // for compair min max 
     this.children = [];
     this.ply = ply;
+    // this.aa = undefined;
     this.actingTeam = (ply % 2) + 1; // for debugging
   }
 
@@ -20,23 +21,17 @@ export default class GamestateNode {
    */
   applyMoveToGameboard(plyTeam) {
     const { gameBoard, move } = this;
-    // if (move && move.cellIdx === 52) {
-    //   debugger;
-    // }
     this.gameBoard = gameBoard.applyMove(move, plyTeam);
   }
 
   releaseBoard(){
-    this.gameBoard = null; // hopefully helping garbage collection to start a bit earlier 
+    this.gameBoard = null; // hopefully helping garbage collection to start a bit earlier
+    delete this.gameBoard;
   }
 
   checkWin(team) {
     const { gameBoard } = this;
     const winValue = gameBoard.evaluateWin(team);
-    // if (winValue >= fiveInRow){
-    //   console.log(winValue, fiveInRow);
-    //   debugger;
-    // }
     return winValue >= fiveInRow;
   }
 
@@ -45,45 +40,47 @@ export default class GamestateNode {
    * @param {number, 1 or 2} team search is perforemed for this team
    * @param {number, 1 or 2} teamPly the theam to act at this ply
    */
-  // sortChildren(shouldMax) {
-  //   if (this.children.length > 0) {
-  //     this.children.sort(shouldMax ? sortNodesByMaxValue : sortNodesByMinValue);
-  //     return this.children[0].value;
-  //   }
-  // }
   sortChildren(shouldMax) {
     if (this.children.length > 0) {
-      const { children } = this;
-      let best, bestIdx = -1;
-      if (!shouldMax) {
-        best = -1000;
-        children.forEach( (c, idx) => {
-          if(c.value > best) {
-            best = c.value;
-            bestIdx = idx;
-          }
-        });
-      } else {
-        best = 1000;
-        children.forEach( (c, idx)  => {
-          if(c.value < best) {
-            best = c.value;
-            bestIdx = idx;
-          }
-        });
-      }
-      if (bestIdx !== -1) {
-        this.children[0].move = children[bestIdx].move;
-        this.children[0].value = best;
-      }
-      return best;
+      this.children.sort(shouldMax ? sortNodesByMaxValue : sortNodesByMinValue);
+      return this.children[0].value;
     }
   }
+  // doesn't seem to help much
+  // sortChildren(shouldMax) {
+  //   if (this.children.length > 0) {
+  //     const { children } = this;
+  //     let best, bestIdx = -1;
+  //     if (!shouldMax) {
+  //       best = -1000;
+  //       children.forEach( (c, idx) => {
+  //         if(c.value > best) {
+  //           best = c.value;
+  //           bestIdx = idx;
+  //         }
+  //       });
+  //     } else {
+  //       best = 1000;
+  //       children.forEach( (c, idx)  => {
+  //         if(c.value < best) {
+  //           best = c.value;
+  //           bestIdx = idx;
+  //         }
+  //       });
+  //     }
+  //     if (bestIdx !== -1) {
+  //       this.children[0].move = children[bestIdx].move;
+  //       this.children[0].value = best;
+  //     } else {
+  //       best = 0;
+  //     }
+  //     return best;
+  //   }
+  // }
 
   getBestMove() {
     const { children } = this;
     if (children.length > 0) {
-      console.log('best node: ', children[0].value);
       return children[0].move;
     }
     return null;
@@ -94,7 +91,7 @@ export default class GamestateNode {
     if (children.length > 0) {
       return children[0].value;
     }
-    return 0;
+    return 0; // or undefined?
   }
 
   /**

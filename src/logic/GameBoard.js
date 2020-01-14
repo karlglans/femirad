@@ -41,9 +41,11 @@ export default class GameBoard {
   applyMove(move, team) {
     const newBoard = new GameBoard(this.row);
     newBoard.board = this.board.slice();
-    if (move == null || move === undefined) {
-      
-    } else {
+    // if (move == null || move === undefined) {
+    // } else {
+    //   newBoard.board[move.getCellId()] = team;
+    // }
+    if (!!move) {
       newBoard.board[move.getCellId()] = team;
     }
     return newBoard;
