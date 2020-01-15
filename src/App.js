@@ -20,14 +20,18 @@ class App extends React.Component {
       currentPlayer: game.currentPlayer(),
       lastChangedCellIdx: -1,
       gameOver: false
-    }
+    };
+  }
+
+  componentDidMount(){
+    document.title = "Femirad";
   }
 
   handleStep() {
     if (game.isGameOver()) {
       return;
     }
-    // TODO: seems be blocking or something
+    // TODO: seems to be blocking or something
     console.log('- handleStep handleStep - ');
     this.setState({ isAllowingNextStep: false, lastChangedCellIdx: -1 });
     game.doNextMove()

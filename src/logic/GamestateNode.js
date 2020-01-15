@@ -12,7 +12,7 @@ export default class GamestateNode {
     this.value = undefined; // for compair min max 
     this.children = [];
     this.ply = ply;
-    // this.aa = undefined;
+    this.aa = undefined;
     this.actingTeam = (ply % 2) + 1; // for debugging
   }
 
@@ -42,6 +42,7 @@ export default class GamestateNode {
    */
   sortChildren(shouldMax) {
     if (this.children.length > 0) {
+      // expensive?
       this.children.sort(shouldMax ? sortNodesByMaxValue : sortNodesByMinValue);
       return this.children[0].value;
     }
@@ -112,6 +113,7 @@ export default class GamestateNode {
   staticEvaluation(team) {
     const { gameBoard } = this;
     const opponentTeam = team === 1 ? 2 : 1;
+    // this is a pretty defensive approach. This number should be set somwhere else
     const value = gameBoard.evaluate(team) - 2 * gameBoard.evaluate(opponentTeam);
     gameBoard.relese(); // to save memory
     this.gameBoard = null;

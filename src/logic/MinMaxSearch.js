@@ -23,7 +23,7 @@ export function minMax(gamestateNode, ply, maxPly, team, ply0, shouldMax, alpha,
   // stop searching deeper if this node is a win
   if (gamestateNode.checkWin(prevTeam)) {
     // will reward shortest path to win by subtracting ply
-    const reward = prevTeam === team ? fiveInRow - ply : -fiveInRow;
+    const reward = prevTeam === team ? fiveInRow - ply : -20000;
     gamestateNode.value = reward;
     return reward;
   }

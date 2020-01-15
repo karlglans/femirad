@@ -12,7 +12,7 @@ export default class FiveInRowGame {
     this.tempClick = 0;
     this.gameIsOver = false;
 
-    this.initDebugGameSituation(4); // 4 is still bad
+    this.initDebugGameSituation(0); // 4 is still bad
   }
 
   initDebugGameSituation(situation) {
@@ -70,6 +70,8 @@ export default class FiveInRowGame {
       this.gameBoard.setCell(2 * 16 + 3, 1);
       this.ply = 5; 
     } else if (situation === 4) {
+      // this is a sure loss. And the ago is performing unnecessarily bad
+      // It should go for 89? would prolong the game
       this.gameBoard.setCell(7 * 16 + 6, 2);
       this.gameBoard.setCell(7 * 16 + 7, 1);
       this.gameBoard.setCell(8 * 16 + 6, 1);
@@ -79,16 +81,13 @@ export default class FiveInRowGame {
       this.gameBoard.setCell(6 * 16 + 8, 1);
       this.gameBoard.setCell(6 * 16 + 5, 1);
       this.gameBoard.setCell(7 * 16 + 9, 1);
-
       this.gameBoard.setCell(10 * 16 + 9, 2);
       this.gameBoard.setCell(11 * 16 + 10, 1);
-
-      // this.gameBoard.setCell(8, 2);
-      console.log('blue', 9 * 16 + 5, 5 * 16 + 9);
-      this.ply = 9; 
-
-      // should put blue in 149 or 83
-    }
+      this.gameBoard.setCell(9 * 16 + 5, 2);
+      this.gameBoard.setCell(6 * 16 + 9, 1);
+      console.log('blue', 5 * 16 + 9);
+      this.ply = 11; // 11
+    } 
   }
 
   /**
