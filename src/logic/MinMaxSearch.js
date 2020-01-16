@@ -1,7 +1,7 @@
 import GamestateNode from './GamestateNode';
 import { fiveInRow } from './ranking';
 
-const max_children = 35; // s0: 4 10: 18
+const max_children = 40; // s0: 4 10: 18 35
 const highValue = fiveInRow * 100;
 
 /**
@@ -11,6 +11,9 @@ const highValue = fiveInRow * 100;
  * @param {integer} maxPly number bigger then ply
  * @param {1 or 2} team acting team for whole search
  * @param {integer} ply0 ply for start of the search
+ * @param {bool} shouldMax
+ * @param {number} alpha
+ * @param {number} beta
  */
 export function minMax(gamestateNode, ply, maxPly, team, ply0, shouldMax, alpha, beta) {
   const plyTeam = (ply % 2) + 1; // 1 or 2. Acting team for this turn
@@ -26,10 +29,10 @@ export function minMax(gamestateNode, ply, maxPly, team, ply0, shouldMax, alpha,
   }
 
   if (ply === maxPly) {
-    return gamestateNode.staticEvaluation(prevTeam); // plyTeam
+    return gamestateNode.staticEvaluation(prevTeam);
   }
   
-  // optimization: decrease number of child nodes depening on depth
+  // optimization: decrease number of children depending on depth. note: (ply0 - ply) is negative
   let nChildren = Math.max(max_children + (ply0 - ply) * 2, 2);
 
   const doEverySurroundingCell = ply0 > 0 && ply === ply0;
@@ -39,6 +42,7 @@ export function minMax(gamestateNode, ply, maxPly, team, ply0, shouldMax, alpha,
   if (shouldMax) {
     for (let i = 0; i < len; i++) {
       value = minMax(children[i], ply + 1, maxPly, team, ply0, !shouldMax, alpha, beta);
+      // children[i].v = children[i].move.cellIdx; // debugging
       alpha = Math.max(value, alpha);
       if (beta <= alpha) {
         break;
@@ -47,6 +51,7 @@ export function minMax(gamestateNode, ply, maxPly, team, ply0, shouldMax, alpha,
   } else {
     for (let i = 0; i < len; i++) {
       value = minMax(children[i], ply + 1, maxPly, team, ply0, !shouldMax, alpha, beta);
+      // children[i].v = children[i].move.cellIdx; // debugging
       beta = Math.min(value, beta);
       if (beta <= alpha) {
         break;
