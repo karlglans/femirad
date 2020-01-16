@@ -3,7 +3,6 @@ import { fiveInRow } from './ranking';
 const sortNodesByMaxValue = (a, b) => a.value < b.value ? -1 : a.value > b.value ? 1 : 0;
 const sortNodesByMinValue = (a, b) => a.value > b.value ? -1 : a.value < b.value ? 1 : 0;
 
-// kankse döpa om till BoardSearchNode
 export default class GamestateNode {
   constructor(gameBoard, move, ply) {
     // console.assert(gameBoard instanceof GameBoard);
@@ -12,7 +11,6 @@ export default class GamestateNode {
     this.value = undefined; // for compair min max 
     this.children = [];
     this.ply = ply;
-    this.aa = undefined;
     this.actingTeam = (ply % 2) + 1; // for debugging
   }
 

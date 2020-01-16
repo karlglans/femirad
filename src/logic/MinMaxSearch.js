@@ -23,7 +23,7 @@ export function minMax(gamestateNode, ply, maxPly, team, ply0, shouldMax, alpha,
   // stop searching deeper if this node is a win
   if (gamestateNode.checkWin(prevTeam)) {
     // will reward shortest path to win by subtracting ply
-    const reward = prevTeam === team ? fiveInRow - ply : -20000;
+    const reward = prevTeam === team ? fiveInRow - ply : -fiveInRow;
     gamestateNode.value = reward;
     return reward;
   }
@@ -42,7 +42,7 @@ export function minMax(gamestateNode, ply, maxPly, team, ply0, shouldMax, alpha,
   if (shouldMax) {
     for (let i = 0; i < len; i++) {
       value = minMax(children[i], ply + 1, maxPly, team, ply0, !shouldMax, alpha, beta);
-      children[i].aa = children[i].move.cellIdx; // debugging
+      // children[i].v = children[i].move.cellIdx; // debugging
       alpha = Math.max(value, alpha);
       if (beta <= alpha) {
         break;
@@ -51,7 +51,7 @@ export function minMax(gamestateNode, ply, maxPly, team, ply0, shouldMax, alpha,
   } else {
     for (let i = 0; i < len; i++) {
       value = minMax(children[i], ply + 1, maxPly, team, ply0, !shouldMax, alpha, beta);
-      children[i].aa = children[i].move.cellIdx; // debugging
+      // children[i].v = children[i].move.cellIdx; // debugging
       beta = Math.min(value, beta);
       if (beta <= alpha) {
         break;
@@ -81,7 +81,7 @@ export default class MinMaxSearch {
     const node0 = new GamestateNode(gameBoard, null, ply0);
     // debugger;
     const value = minMax(node0, ply, maxPly, team, ply0, true, -highValue, highValue);
-    console.log(node0);
+    // console.log(node0);
     const move = node0.getBestMove();
     move.value = value;
     return move; 
