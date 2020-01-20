@@ -24,32 +24,26 @@ class App extends React.Component {
   }
 
   componentDidMount(){
-    document.title = "Femirad";
+    document.title = 'Femirad';
   }
 
   handleStep() {
-    if (game.isGameOver()) {
-      return;
+    if (!game.isGameOver()) {
+      this.setState({ isAllowingNextStep: false, lastChangedCellIdx: -1 });
+      game.doNextMove()
+        .then( (cellIdx) => {
+          this.setState({
+            gameBoard : game.getGameBoard(),
+            isAllowingNextStep: true,
+            lastChangedCellIdx: cellIdx,
+            gameOver: game.isGameOver(),
+            currentPlayer: game.currentPlayer() });
+        });
     }
-    // TODO: seems to be blocking or something
-    console.log('- handleStep handleStep - ');
-    this.setState({ isAllowingNextStep: false, lastChangedCellIdx: -1 });
-    game.doNextMove()
-      .then( (cellIdx) => {
-        this.setState({
-          gameBoard : game.getGameBoard(),
-          isAllowingNextStep: true,
-          lastChangedCellIdx: cellIdx,
-          gameOver: game.isGameOver(),
-          currentPlayer: game.currentPlayer() });
-      });
   }
 
   handleClickCell(cellIdx) {
-    if (game.isGameOver()) {
-      return;
-    }
-    if (this.state.isAllowingNextStep) {
+    if (this.state.isAllowingNextStep && !game.isGameOver()) {
       game.setCell(cellIdx, 1);
       this.setState({
         currentPlayer: game.currentPlayer(),
