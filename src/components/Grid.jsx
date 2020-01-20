@@ -12,39 +12,35 @@ const style = {
   borderWidth: 1.5,
   cursor: 'pointer',
   color: '#fff'
-}
+};
 
 function GridCell (props) {
   return (
     <div
       style={{ ...style, 
-        backgroundColor: props.cellState === 1 ? 'red' : props.cellState === 2 ? 'blue' : '#aaa' }}
+        backgroundColor: props.cellState === 1 ? 'red' : props.cellState === 2 ? 'blue':'#aaa' }}
       onClick={() => props.clickhandler(props.cellIdx)} >
       {props.flicker? null : props.cellState}
     </div>
   );
 }
 
-// className={'animate-flicker'}
-
-class Grid extends React.Component {
-  render() {
-    return (
-      <div style={{ display:'flex', flexFlow: 'row wrap', height: 600, width: 600 }}>
-        {
-          [...this.props.gameBoard].map((cellState, i) => (
-            <GridCell
-              key={i}
-              cellIdx={i}
-              clickhandler={this.props.handleClickCell}
-              cellState={cellState}
-              flicker={this.props.lastChangedCellIdx === i}
-            />
-          ))
-        }
-      </div>
-    );
-  }
+function Grid (props) {
+  return (
+    <div style={{ display:'flex', flexFlow: 'row wrap', height: 600, width: 600 }}>
+      {
+        [...props.gameBoard].map((cellState, i) => (
+          <GridCell
+            key={i}
+            cellIdx={i}
+            clickhandler={props.handleClickCell}
+            cellState={cellState}
+            flicker={props.lastChangedCellIdx === i}
+          />
+        ))
+      }
+    </div>
+  );
 }
 
 export default Grid;
