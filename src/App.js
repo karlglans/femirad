@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './App.css';
 
 import Grid from './components/Grid';
@@ -8,85 +8,67 @@ import FiveInRow from './logic/FiveInRowGame';
 const row = 16;
 const game = new FiveInRow(row);
 
-class App extends React.Component {
-  constructor() {
-    super();
-    this.handleStep = this.handleStep.bind(this);
-    this.handleClickCell = this.handleClickCell.bind(this);
-    this.handleRestart = this.handleRestart.bind(this);
-    this.state = {
-      gameBoard : game.getGameBoard(),
-      isAllowingNextStep: true,
-      currentPlayer: game.currentPlayer(),
-      lastChangedCellIdx: -1,
-      gameOver: false
-    };
-  }
+function App() {
+  const [gameBoard, setGameBoard] = useState(game.getGameBoard());
+  const [isAllowingNextStep, setIsAllowingNextStep] = useState(true);
+  const [currentPlayer, setCurrentPlayer] = useState(game.currentPlayer());
+  const [lastChangedCellIdx, setLastChangedCellIdx] = useState(-1);
+  const [gameOver, setGameOver] = useState(false);
 
-  componentDidMount(){
-    document.title = 'Femirad';
-  }
-
-  handleStep() {
+  function handleStep() {
     if (!game.isGameOver()) {
-      this.setState({ isAllowingNextStep: false, lastChangedCellIdx: -1 });
+      setIsAllowingNextStep(false);
+      setLastChangedCellIdx(-1);
       game.doNextMove()
         .then( (cellIdx) => {
-          this.setState({
-            gameBoard : game.getGameBoard(),
-            isAllowingNextStep: true,
-            lastChangedCellIdx: cellIdx,
-            gameOver: game.isGameOver(),
-            currentPlayer: game.currentPlayer() });
+          setGameBoard(game.getGameBoard());
+          setIsAllowingNextStep(true);
+          setLastChangedCellIdx(cellIdx);
+          setGameOver(game.isGameOver());
+          setCurrentPlayer(game.currentPlayer());
         });
     }
   }
 
-  handleClickCell(cellIdx) {
-    if (this.state.isAllowingNextStep && !game.isGameOver()) {
+  function handleClickCell(cellIdx) {
+    if (isAllowingNextStep && !game.isGameOver()) {
       game.setCell(cellIdx, 1);
-      this.setState({
-        currentPlayer: game.currentPlayer(),
-        gameBoard : game.getGameBoard(),
-        gameOver: game.isGameOver(),
-        lastChangedCellIdx: cellIdx
-      });
+      setLastChangedCellIdx(cellIdx);
+      setGameOver(game.isGameOver());
+      setCurrentPlayer(game.currentPlayer());
+      setGameBoard(game.getGameBoard());
     }
   }
 
-  handleRestart() {
-    if (this.state.isAllowingNextStep) {
+  function handleRestart() {
+    if (isAllowingNextStep) {
       game.reset();
-      this.setState({
-        currentPlayer: game.currentPlayer(),
-        gameBoard : game.getGameBoard(),
-        gameOver: game.isGameOver(),
-        lastChangedCellIdx: -1
-      });
+      setLastChangedCellIdx(-1);
+      setGameOver(game.isGameOver());
+      setCurrentPlayer(game.currentPlayer());
+      setGameBoard(game.getGameBoard());
     }
   }
   
-  render() {
-    return (
-      <div className="App" style={{display: 'flex', justifyContent: 'center', height: 'calc(100VH)', alignItems: 'center', backgroundColor: '#ebebeb' }}>
-        <div style={{ position: 'relative', height: 600, width: 600 }}>
-          <Grid
-            row = {row}
-            gameBoard = {this.state.gameBoard}
-            handleClickCell = {this.handleClickCell}
-            lastChangedCellIdx = {this.state.lastChangedCellIdx}
-          />
-          <ControlPanel
-            gameOver={this.state.gameOver}
-            handleStep={this.handleStep}
-            handleRestart={this.handleRestart}
-            isAllowingNextStep={this.state.isAllowingNextStep}
-            currentPlayer={this.state.currentPlayer}
-          />
-        </div>
+  return (
+    <div className="App" style={{display: 'flex', justifyContent: 'center', height: 'calc(100VH)', alignItems: 'center', backgroundColor: '#ebebeb' }}>
+      <div style={{ position: 'relative', height: 600, width: 600 }}>
+        <Grid
+          row = {row}
+          gameBoard = {gameBoard}
+          handleClickCell = {handleClickCell}
+          lastChangedCellIdx = {lastChangedCellIdx}
+        />
+        <ControlPanel
+          gameOver={gameOver}
+          handleStep={handleStep}
+          handleRestart={handleRestart}
+          isAllowingNextStep={isAllowingNextStep}
+          currentPlayer={currentPlayer}
+        />
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 export default App;
